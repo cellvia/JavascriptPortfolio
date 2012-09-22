@@ -1,0 +1,10 @@
+{
+  "name": "cellvia",
+  "version": "0.0.1",
+  "dependencies": {
+    "express": "",
+    "jsdom": "",
+	"request": "",
+	"underscore": ""
+  }
+}

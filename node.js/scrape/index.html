@@ -1,0 +1,67 @@
+<html>
+<head>
+<title>Scraper</title>
+
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js"></script>
+<script type="text/javascript" src="/dnode.js"></script>
+
+
+<style type="text/css">
+#content {
+  font-family:Courier;
+ color: #CCCCCC;
+  background: #000000;
+  border: 3px double #CCCCCC;
+  padding: 10px;
+  width: 95%;
+  height: 90%;
+  margin: auto;
+  overflow: auto;
+  font-size: 12px;
+}
+</style>
+
+</head>
+<body>	
+
+	<button class="init" id="initSerial" disabled="disabled">Scrape Serially!</button>
+	<button class="init" id="initParallel" disabled="disabled">Scrape Parallel!</button>
+	<div id="content"></div>
+
+<script>
+
+	function server(){
+		DNode(function () {
+
+			this.dataUpdate = function(data){
+				jQuery(".init").attr("disabled", "disabled");
+				jQuery("#content").append(data+"<br\>");
+				jQuery("#content").attr({ scrollTop: $("#content").attr("scrollHeight") });
+			};
+			
+			this.enable = function(){
+				jQuery(".init").attr("disabled", "");			
+			}
+			
+			this.start = function(){
+				jQuery("#content").html("");
+			}
+			
+		}).connect(function ( remote ) {
+			jQuery("#initSerial").click(function(){
+				remote.initiate("serial");
+				jQuery(".init").attr("disabled", "disabled");
+			});
+			jQuery("#initParallel").click(function(){
+				remote.initiate("parallel");
+				jQuery(".init").attr("disabled", "disabled");
+			});
+		})
+	}
+
+	server();
+	
+</script>
+
+</body>
+</html>

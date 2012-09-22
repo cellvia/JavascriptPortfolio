@@ -1,0 +1,11 @@
+{
+  "name": "cellvia",
+  "version": "0.0.1",
+  "dependencies": {
+    "express": "",
+    "dnode": "",
+	"traverse": "",
+	"mongoq": "",
+	"underscore": ""
+  }
+}

@@ -1,0 +1,147 @@
+<html>
+<head>
+<title>Groupbox - DNode Chat Example</title>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.5.2/jquery.min.js"></script>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.11/jquery-ui.min.js"></script>
+<script type="text/javascript" src="http://documentcloud.github.com/underscore/underscore-min.js"></script>
+<script type="text/javascript" src="/dnode.js"></script>
+<link rel="stylesheet" type="text/css" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/smoothness/jquery-ui.css">
+
+<style>
+	body{
+		font-size: 26px;
+	}
+	#groupbox{
+		position:absolute;
+		left:300px;
+		top:200px;
+		width:200px;
+		height:200px;
+		border: 3px solid black;
+	}
+	.box{
+		position:relative;
+		float:left;
+		width:50px;
+		height:50px;
+		border: 3px solid black;
+	}
+	#boxes, #history{
+		display:block;
+		clear:both;
+	}
+</style>
+
+</head>
+<body>	
+	<div class="scrollbar"></div><br />
+	<div id="groupbox">groupbox!</div>
+	<div id="boxes"></div>
+	<div id="history"></div>
+
+<script>
+	var	uid = Math.floor(Math.random(0,0,10000)*10000);
+
+	function init() {
+		GUI.createSlider();
+		GUI.createBox(uid, 100);
+		SEND.serverSlider();
+	}
+	
+	var SEND = {
+		serverSlider: function(){
+			var thisObj = this;
+			DNode(function () {
+				this.uid = uid;
+
+				this.sliderval = 100;
+
+				this.sliderupdate = function(ruid, val, groupBoxAvg){
+					if(ruid !== uid){
+						GUI.rotateBox ( val, ruid );
+					}
+					GUI.rotateBox( groupBoxAvg, "groupbox" );
+				};
+
+				this.joined = function( ruid ){
+					if(ruid !== uid){
+						GUI.createBox( ruid, 100 );
+					}
+				}
+
+				this.departed = function( ruid ){
+					$("#"+ruid).remove();
+				}
+			}).connect(function ( remote ) {
+				GUI.scrollBind( remote );
+				thisObj.getUsers( remote );
+			})
+		},
+		getUsers: function( remote ){
+			remote.users(function (clients, groupBoxAvg) {
+				$.each(clients, function (index, client) {
+					if(client.uid != uid){
+						GUI.createBox( client.uid, client.sliderval );
+						GUI.rotateBox( client.sliderval, client.uid);
+					}
+				});
+				GUI.rotateBox( groupBoxAvg, "groupbox" );
+			});
+		}
+	}
+	
+	
+	var GUI = {
+		createSlider: function(){
+			jQuery(".scrollbar").slider({step:5, value: 100});
+		},
+		
+		sliderVal: function(){
+			return jQuery(".scrollbar").slider("value");
+		},
+		
+		scrollBind: function( remote ){
+			$(".scrollbar")
+				.bind( "slide", function(event, ui) {
+					//if(event.originalEvent) {
+						remote.sliderChange(ui.value);
+					//}
+					GUI.rotateBox ( ui.value, uid );
+				})
+				.bind( "slidestop", function(event, ui) {
+					remote.sliderChange(ui.value);
+				})
+			;			
+		},
+
+		createBox: function ( ruid, val ){
+			$("#boxes").append('<div class="box" id="'+ruid+'">'+val+'</div>');
+			return false;
+		},
+		
+		rotateBox: function( uival, ruid ) {
+			var scale = uival/100;
+			scale = 'scale('+scale+')';
+			var rotateAngle = uival*(3.6);
+			rotateAngle = rotateAngle * (Math.PI/180);
+			rotateAngle = 'rotate('+rotateAngle+'rad)';
+
+			var box = $("#"+ruid);
+			// Rotate the image to the new angle, and store the new angle
+			box.css('transform',rotateAngle + ' ' + scale);
+			box.css('-moz-transform',rotateAngle + ' ' + scale);
+			box.css('-webkit-transform',rotateAngle + ' ' + scale);
+			box.css('-o-transform',rotateAngle + ' ' + scale);
+
+			box.html(uival);
+
+			return false;
+		}	
+	}
+	
+	init();
+	
+</script>
+
+</body>
+</html>
