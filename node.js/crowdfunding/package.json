@@ -1,0 +1,17 @@
+{
+  "name": "fundilio",
+  "version": "0.0.1",
+  "dependencies": {
+    "express": "",
+	"passport": "",
+    "passport-local": "",
+    "passport-google": "",
+    "passport-facebook": "",
+    "underscore": "",
+    "validator": "",
+    "crypto": "",
+    "mongoose": "",
+    "moment": "",
+    "nodemailer": ""
+  }
+}
